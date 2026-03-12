@@ -1,0 +1,40 @@
+<#include "/common/head.html">
+			<h2 class="page-title">我的订单</h2>
+			<#if orderlists ??>
+				<div class="card">
+					<div class="table-wrap">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>订单号</th>
+									<th>收货地址</th>
+									<th>日期</th>
+									<th>状态</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<#list orderlists as o>
+								<tr>
+									<td>${o.id}</td>
+									<td>${o.addr!''}</td>
+									<td>${o.odate!''}</td>
+									<td>
+										<#if (o.status == 0)>未处理</#if>
+										<#if (o.status == 1)>已处理</#if>
+										<#if (o.status == 2)>废单</#if>
+									</td>
+									<td><a href="/order/detail/${o.id}">详情</a></td>
+								</tr>
+								</#list>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			<#else>
+				<div class="card card-body">
+					<p class="text-muted">暂无订单</p>
+					<a href="/" class="btn btn-primary">去逛逛</a>
+				</div>
+			</#if>
+<#include "/common/tail.html">

@@ -1,0 +1,28 @@
+		</main>
+	</div>
+	<footer class="site-footer">
+		<div class="footer-inner">
+			<div class="footer-links">
+				<a href="#">支付方式</a>
+				<a href="/">首页</a>
+				<a href="/cart">购物车</a>
+				<a href="#">返回顶部</a>
+			</div>
+		</div>
+		<div class="copyright">版权所有 &copy; 我的电商</div>
+	</footer>
+	<script>
+	(function(){
+		var key = 'indexScrollY';
+		document.querySelectorAll('a.pagination-link').forEach(function(a){
+			a.addEventListener('click', function(){ sessionStorage.setItem(key, window.scrollY); });
+		});
+		var y = sessionStorage.getItem(key);
+		if (y != null) {
+			sessionStorage.removeItem(key);
+			requestAnimationFrame(function(){ window.scrollTo(0, parseInt(y, 10)); });
+		}
+	})();
+	</script>
+</body>
+</html>

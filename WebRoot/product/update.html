@@ -1,0 +1,41 @@
+<#include "/common/head.html">
+			<#if product ??>
+			<h2 class="page-title">修改商品</h2>
+			<div class="card card-body" style="max-width:480px;">
+			<form action="/product/update" method="post">
+				<input type="hidden" name="update" value="ok">
+				<input type="hidden" name="id" value="${product.id}">
+				<div class="form-group">
+					<label>商品名称</label>
+					<input type="text" name="name" class="form-control" value="${product.name}" required>
+				</div>
+				<div class="form-group">
+					<label>描述</label>
+					<textarea name="descr" class="form-control">${product.descr!''}</textarea>
+				</div>
+				<div class="form-group">
+					<label>原价</label>
+					<input type="number" name="normalprice" class="form-control" value="${product.normalprice}" required>
+				</div>
+				<div class="form-group">
+					<label>会员价</label>
+					<input type="number" name="memberprice" class="form-control" value="${product.memberprice}" required>
+				</div>
+				<div class="form-group">
+					<label>分类</label>
+					<#if categories ??>
+					<select name="categoryId" class="form-control">
+						<#list categories as c>
+							<option value="${c.id}" <#if (c.id == product.categoryid)>selected</#if>>${c.name}</option>
+						</#list>
+					</select>
+					<#else>
+					<input type="number" name="categoryId" class="form-control" value="${product.categoryid}">
+					</#if>
+				</div>
+				<button type="submit" class="btn btn-primary">保存</button>
+			</form>
+			<#if info ??><p class="mt-2 <#if info?contains('失败')>red<#else>green</#if>">${info}</p></#if>
+			</div>
+			</#if>
+<#include "/common/tail.html">

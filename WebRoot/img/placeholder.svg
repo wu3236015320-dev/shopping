@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" fill="none">
+  <rect width="400" height="400" fill="#f0eeea"/>
+  <g fill="#d4cfc6" stroke="#c8c3bb" stroke-width="1">
+    <rect x="140" y="120" width="120" height="120" rx="8"/>
+    <path d="M160 160h80v12H160zM160 188h60v8H160zM160 212h50v8H160z"/>
+  </g>
+  <text x="200" y="280" text-anchor="middle" fill="#9a9590" font-family="sans-serif" font-size="14">商品图片</text>
+</svg>

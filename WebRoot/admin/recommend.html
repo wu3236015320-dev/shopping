@@ -1,0 +1,363 @@
+<#include "/common/admin_head.html">
+
+<div class="page-title">推荐商品管理</div>
+
+<div class="card mb-2">
+    <div class="card-body">
+        <h3 style="margin-bottom: 20px; font-size: 1.1rem; color: var(--text);">当前推荐商品（共 ${recommendCount!0} 个）</h3>
+
+        <!-- 数量控制 -->
+        <div class="form-group" style="max-width: 400px; margin-bottom: 24px;">
+            <label>推荐商品数量：<span id="countValue">${recommendCount!0}</span> 个</label>
+            <input type="range" id="countSlider" min="1" max="20" value="${recommendCount!0}" class="form-control" style="width: 100%;">
+            <small class="text-muted" style="display: block; margin-top: 8px;">拖动滑块调整数量，系统会自动添加或移除商品</small>
+        </div>
+
+        <!-- 推荐商品列表 -->
+        <div id="recommendList" class="recommend-list">
+            <#if recommendProducts ?? && (recommendProducts?size > 0)>
+                <#list recommendProducts as p>
+                    <div class="recommend-item" data-product-id="${p.id}">
+                        <div class="recommend-item-img">
+                            <img src="/img/product/${p.id}.jpg" alt="${p.name}" onerror="this.src='/img/placeholder.svg'">
+                        </div>
+                        <div class="recommend-item-info">
+                            <div class="recommend-item-name">${p.name}</div>
+                            <div class="recommend-item-price">¥${p.memberprice?string("0.##")}</div>
+                        </div>
+                        <div class="recommend-item-actions">
+                            <button class="btn btn-sm btn-outline move-up-btn" data-id="${p.id}" title="上移">↑</button>
+                            <button class="btn btn-sm btn-outline move-down-btn" data-id="${p.id}" title="下移">↓</button>
+                            <button class="btn btn-sm btn-outline remove-btn" data-id="${p.id}" title="移除">×</button>
+                        </div>
+                    </div>
+                </#list>
+            <#else>
+                <div class="empty-state">
+                    <p class="text-muted">暂无推荐商品</p>
+                    <button id="initRecommendBtn" class="btn btn-primary" style="margin-top: 12px;">随机初始化10个商品</button>
+                </div>
+            </#if>
+        </div>
+
+        <!-- 添加商品按钮 -->
+        <div style="margin-top: 20px;">
+            <button id="addRecommendBtn" class="btn btn-primary">+ 添加推荐商品</button>
+            <a href="/recommend" target="_blank" class="btn btn-outline" style="margin-left: 12px;">查看推荐页面</a>
+        </div>
+    </div>
+</div>
+
+<!-- 添加商品模态框 -->
+<div id="addModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 800px; max-height: 80vh; overflow-y: auto;">
+        <div class="modal-header">
+            <h3>添加推荐商品</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="availableProducts" class="product-grid" style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));">
+                <!-- 动态加载可选商品 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .recommend-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .recommend-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        background: linear-gradient(180deg, #f8fafc 0%, #f0f2f5 100%);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        transition: all 0.25s ease;
+    }
+    .recommend-item:hover {
+        border-color: var(--accent);
+        box-shadow: var(--shadow);
+    }
+    .recommend-item-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+    .recommend-item-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .recommend-item-info {
+        flex: 1;
+        min-width: 0;
+    }
+    .recommend-item-name {
+        font-weight: 600;
+        font-size: 15px;
+        color: var(--text);
+        margin-bottom: 4px;
+    }
+    .recommend-item-price {
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+    .recommend-item-actions {
+        display: flex;
+        gap: 8px;
+    }
+    .recommend-item-actions .btn {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 48px 24px;
+        background: linear-gradient(180deg, #f8fafc 0%, #f0f2f5 100%);
+        border-radius: 12px;
+        border: 1px dashed var(--border);
+    }
+    .available-product {
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+    .available-product:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+    }
+    .available-product.selected {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+</style>
+
+<script>
+(function() {
+    'use strict';
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        bindEvents();
+    });
+
+    function bindEvents() {
+        // 数量滑块
+        var countSlider = document.getElementById('countSlider');
+        var countValue = document.getElementById('countValue');
+        if (countSlider) {
+            countSlider.addEventListener('input', function() {
+                countValue.textContent = this.value;
+            });
+            countSlider.addEventListener('change', function() {
+                adjustCount(parseInt(this.value));
+            });
+        }
+
+        // 添加商品按钮
+        var addBtn = document.getElementById('addRecommendBtn');
+        if (addBtn) {
+            addBtn.addEventListener('click', openAddModal);
+        }
+
+        // 初始化按钮
+        var initBtn = document.getElementById('initRecommendBtn');
+        if (initBtn) {
+            initBtn.addEventListener('click', function() {
+                adjustCount(10);
+            });
+        }
+
+        // 移除按钮
+        document.querySelectorAll('.remove-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var productId = this.getAttribute('data-id');
+                removeRecommend(productId);
+            });
+        });
+
+        // 上移按钮
+        document.querySelectorAll('.move-up-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var productId = this.getAttribute('data-id');
+                moveItem(productId, -1);
+            });
+        });
+
+        // 下移按钮
+        document.querySelectorAll('.move-down-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var productId = this.getAttribute('data-id');
+                moveItem(productId, 1);
+            });
+        });
+
+        // 模态框关闭
+        document.querySelector('.modal-close')?.addEventListener('click', closeAddModal);
+        document.getElementById('addModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeAddModal();
+        });
+    }
+
+    // 调整推荐商品数量
+    function adjustCount(targetCount) {
+        fetch('/admin/recommend/adjustCount?targetCount=' + targetCount, {
+            method: 'POST'
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                alert('数量调整成功');
+                location.reload();
+            } else {
+                alert('调整失败：' + data.message);
+            }
+        })
+        .catch(function(err) {
+            console.error('Error:', err);
+            alert('请求失败');
+        });
+    }
+
+    // 移除推荐商品
+    function removeRecommend(productId) {
+        if (!confirm('确定要移除这个推荐商品吗？')) return;
+
+        fetch('/admin/recommend/remove?productId=' + productId, {
+            method: 'POST'
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('移除失败：' + data.message);
+            }
+        })
+        .catch(function(err) {
+            console.error('Error:', err);
+            alert('请求失败');
+        });
+    }
+
+    // 移动排序
+    function moveItem(productId, direction) {
+        var items = document.querySelectorAll('.recommend-item');
+        var ids = [];
+        items.forEach(function(item) {
+            ids.push(item.getAttribute('data-product-id'));
+        });
+
+        var currentIndex = ids.indexOf(productId);
+        var newIndex = currentIndex + direction;
+
+        if (newIndex < 0 || newIndex >= ids.length) return;
+
+        // 交换位置
+        var temp = ids[currentIndex];
+        ids[currentIndex] = ids[newIndex];
+        ids[newIndex] = temp;
+
+        // 提交新排序
+        updateSort(ids.join(','));
+    }
+
+    // 更新排序
+    function updateSort(productIds) {
+        fetch('/admin/recommend/updateSort?productIds=' + encodeURIComponent(productIds), {
+            method: 'POST'
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('排序更新失败：' + data.message);
+            }
+        })
+        .catch(function(err) {
+            console.error('Error:', err);
+            alert('请求失败');
+        });
+    }
+
+    // 打开添加模态框
+    function openAddModal() {
+        var modal = document.getElementById('addModal');
+        var container = document.getElementById('availableProducts');
+
+        container.innerHTML = '<p style="text-align: center; padding: 24px; color: var(--text-muted);">加载中...</p>';
+        modal.style.display = 'flex';
+
+        // 加载可选商品
+        fetch('/admin/recommend/availableProducts')
+            .then(function(response) { return response.json(); })
+            .then(function(products) {
+                if (products.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; padding: 24px; color: var(--text-muted);">没有可添加的商品了</p>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                products.forEach(function(p) {
+                    var item = document.createElement('div');
+                    item.className = 'product-card available-product';
+                    item.setAttribute('data-id', p.id);
+                    item.innerHTML =
+                        '<div class="img-wrap">' +
+                        '<img src="/img/product/' + p.id + '.jpg" alt="' + p.name + '" onerror="this.src=\'/img/placeholder.svg\'">' +
+                        '</div>' +
+                        '<div class="info">' +
+                        '<div class="name">' + p.name + '</div>' +
+                        '<div class="price">¥' + p.memberprice + '</div>' +
+                        '</div>';
+
+                    item.addEventListener('click', function() {
+                        addRecommend(p.id);
+                    });
+
+                    container.appendChild(item);
+                });
+            })
+            .catch(function(err) {
+                console.error('Error:', err);
+                container.innerHTML = '<p style="text-align: center; padding: 24px; color: red;">加载失败</p>';
+            });
+    }
+
+    // 关闭添加模态框
+    function closeAddModal() {
+        document.getElementById('addModal').style.display = 'none';
+    }
+
+    // 添加推荐商品
+    function addRecommend(productId) {
+        fetch('/admin/recommend/add?productId=' + productId, {
+            method: 'POST'
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                closeAddModal();
+                location.reload();
+            } else {
+                alert('添加失败：' + data.message);
+            }
+        })
+        .catch(function(err) {
+            console.error('Error:', err);
+            alert('请求失败');
+        });
+    }
+})();
+</script>
+
+<#include "/common/admin_tail.html">

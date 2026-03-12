@@ -1,0 +1,9 @@
+<#include "/common/head.html">
+			<#if info ??>
+				<div class="card card-body">
+					<p class="green" style="font-size:1.1rem;">${info}</p>
+					<a href="/" class="btn btn-primary">返回首页</a>
+					<a href="/order/myOrder/<#if user??>${user.id}</#if>" class="btn btn-outline">我的订单</a>
+				</div>
+			</#if>
+<#include "/common/tail.html">

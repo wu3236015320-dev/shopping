@@ -1,0 +1,88 @@
+<#include "/common/admin_head.html">
+
+<div class="page-title">👤 用户管理</div>
+
+<!-- 操作按钮栏 -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/admin/addUser" class="btn btn-primary">+ 添加用户</a>
+        <a href="/admin/searchUser" class="btn btn-outline">🔍 查找用户</a>
+    </div>
+</div>
+
+<!-- 用户列表 -->
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <div class="table-wrap">
+            <table class="table" style="margin-bottom: 0;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>电话</th>
+                        <th>地址</th>
+                        <th>注册时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <#if userPage?? && userPage?size gt 0>
+                        <#list userPage as u>
+                        <tr>
+                            <td>${u.id}</td>
+                            <td>${u.username}</td>
+                            <td>${u.phone!''}</td>
+                            <td>${u.addr!''}</td>
+                            <td>${u.rdate!''}</td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-outline" style="color: #dc2626;" onclick="return confirm('确定删除用户 ${u.username}？') && deleteUser(${u.id});">删除</a>
+                            </td>
+                        </tr>
+                        </#list>
+                    <#else>
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 48px; color: #718096;">暂无用户数据</td>
+                        </tr>
+                    </#if>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 分页 -->
+<#if pageNo?? && pageCount??>
+<div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 20px;">
+    <#if pageNo gt 1>
+        <a href="/admin/user/${pageNo-1}" class="btn btn-outline btn-sm">上一页</a>
+    <#else>
+        <span class="btn btn-outline btn-sm" style="opacity: 0.5; cursor: not-allowed;">上一页</span>
+    </#if>
+    <span class="text-muted">第 ${pageNo} / ${pageCount} 页</span>
+    <#if pageNo lt pageCount>
+        <a href="/admin/user/${pageNo+1}" class="btn btn-outline btn-sm">下一页</a>
+    <#else>
+        <span class="btn btn-outline btn-sm" style="opacity: 0.5; cursor: not-allowed;">下一页</span>
+    </#if>
+</div>
+</#if>
+
+<script>
+function deleteUser(userId) {
+    fetch('/admin/deleteUser?id=' + userId, { method: 'POST' })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('删除失败：' + data.message);
+            }
+        })
+        .catch(function() {
+            alert('请求失败');
+        });
+    return false;
+}
+</script>
+
+<#include "/common/admin_tail.html">

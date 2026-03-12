@@ -1,0 +1,87 @@
+<#include "/common/head.html">
+
+<!-- 推荐页面专属轮盘展示区 -->
+<section class="recommend-hero">
+    <div class="recommend-hero-inner">
+        <span class="recommend-hero-badge">精选推荐</span>
+        <h1 class="recommend-hero-title">人气好物 · 为你精选</h1>
+        <p class="recommend-hero-desc">滑动切换，发现更多精彩商品</p>
+        <div class="recommend-hero-accent"></div>
+    </div>
+</section>
+
+<!-- 轮盘商品展示区 -->
+<section class="carousel-section" id="main-content">
+    <h2 class="recommend-section-title">
+        <span class="recommend-section-title-text">本周推荐</span>
+        <span class="recommend-section-title-line"></span>
+    </h2>
+    
+    <#if products ?? && (products?size > 0)>
+        <!-- 轮盘容器 -->
+        <div class="carousel-container" id="productCarousel">
+            <!-- 左箭头 -->
+            <button class="carousel-arrow carousel-arrow-prev" aria-label="上一个">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            
+            <!-- 轮盘轨道 -->
+            <div class="carousel-track-wrapper">
+                <div class="carousel-track">
+                    <#list products as p>
+                        <div class="carousel-slide" data-index="${p_index}">
+                            <a href="/product/detail/${p.id}" class="carousel-card">
+                                <div class="carousel-card-img">
+                                    <img src="/img/product/${p.id}.jpg" alt="${p.name}" onerror="this.src='/img/placeholder.svg'">
+                                    <#if p_index < 3>
+                                        <span class="carousel-card-tag">热门</span>
+                                    </#if>
+                                </div>
+                                <div class="carousel-card-body">
+                                    <h3 class="carousel-card-name">${p.name}</h3>
+                                    <p class="carousel-card-desc">${(p.descr!'')?replace('\n',' ')}</p>
+                                    <div class="carousel-card-price">¥${p.memberprice?string("0.##")}</div>
+                                    <span class="carousel-card-cta">立即选购</span>
+                                </div>
+                            </a>
+                        </div>
+                    </#list>
+                </div>
+            </div>
+            
+            <!-- 右箭头 -->
+            <button class="carousel-arrow carousel-arrow-next" aria-label="下一个">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- 指示器圆点 -->
+        <div class="carousel-dots" id="carouselDots">
+            <#list products as p>
+                <button class="carousel-dot <#if p_index == 0>active</#if>" data-index="${p_index}" aria-label="跳转到第${p_index+1}个商品"></button>
+            </#list>
+        </div>
+
+        <#if user ?? && (user.username == "admin")>
+        <!-- 管理员提示 -->
+        <div class="admin-hint" style="margin-top: 24px; padding: 16px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; text-align: center;">
+            <p style="margin: 0; color: #92400e; font-size: 14px;">
+                <strong>管理员提示：</strong>可在 <a href="/admin/recommend" style="color: #c2410c; text-decoration: underline;">管理后台</a> 配置推荐商品
+            </p>
+        </div>
+        </#if>
+    <#else>
+        <div class="home-empty">
+            <p class="text-muted">暂无推荐商品</p>
+        </div>
+    </#if>
+</section>
+
+<!-- 轮盘脚本 -->
+<script src="/js/carousel.js"></script>
+
+<#include "/common/tail.html">

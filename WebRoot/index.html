@@ -1,0 +1,116 @@
+<#include "/common/head.html">
+			<#if isRecommendPage!false>
+			<!-- 推荐商品页：醒目推荐位 + 大卡 + 网格 -->
+			<section class="recommend-hero">
+				<div class="recommend-hero-inner">
+					<span class="recommend-hero-badge">精选推荐</span>
+					<h1 class="recommend-hero-title">人气好物 · 为你精选</h1>
+					<p class="recommend-hero-desc">发现更多值得买的好商品，会员价更划算</p>
+					<div class="recommend-hero-accent"></div>
+				</div>
+			</section>
+			<section class="recommend-section" id="main-content">
+				<h2 class="recommend-section-title">
+					<span class="recommend-section-title-text">本周推荐</span>
+					<span class="recommend-section-title-line"></span>
+				</h2>
+				<#if products ?? && (products?size > 0)>
+					<div class="recommend-featured">
+						<#list products as p>
+							<#if p_index < 2>
+								<article class="recommend-featured-card">
+									<a href="/product/detail/${p.id}" class="recommend-featured-link">
+										<div class="recommend-featured-img">
+											<img src="/img/product/${p.id}.jpg" alt="${p.name}" onerror="this.src='/img/placeholder.svg'">
+											<span class="recommend-featured-tag">推荐</span>
+										</div>
+										<div class="recommend-featured-body">
+											<h3 class="recommend-featured-name">${p.name}</h3>
+											<p class="recommend-featured-desc">${(p.descr!'')?replace('\n',' ')}</p>
+											<div class="recommend-featured-price">¥${p.memberprice?string("0.##")}</div>
+											<span class="recommend-featured-cta">立即选购</span>
+										</div>
+									</a>
+								</article>
+							</#if>
+						</#list>
+					</div>
+					<#if (products?size > 2)>
+						<div class="recommend-grid">
+							<#list products as p>
+								<#if p_index >= 2>
+									<article class="recommend-card">
+										<a href="/product/detail/${p.id}" class="recommend-card-link">
+											<div class="recommend-card-img">
+												<img src="/img/product/${p.id}.jpg" alt="${p.name}" onerror="this.src='/img/placeholder.svg'">
+											</div>
+											<div class="recommend-card-body">
+												<h3 class="recommend-card-name">${p.name}</h3>
+												<div class="recommend-card-price">¥${p.memberprice?string("0.##")}</div>
+												<span class="recommend-card-cta">查看详情</span>
+											</div>
+										</a>
+									</article>
+								</#if>
+							</#list>
+						</div>
+					</#if>
+					<div class="pagination-bar">
+						<#assign pNo = pageNo!1>
+						<#assign pTotal = pageCount!1>
+						<#assign pSize = pageSize!12>
+						<a href="/recommend#main-content" class="btn btn-outline btn-sm pagination-link">首页</a>
+						<#if (pNo > 1)><a href="/recommend?page=${pNo-1}#main-content" class="btn btn-outline btn-sm pagination-link">上一页</a><#else><span class="btn btn-outline btn-sm pagination-disabled">上一页</span></#if>
+						<span class="pagination-info">第 ${pNo} / ${pTotal} 页（每页 ${pSize} 件）</span>
+						<#if (pNo < pTotal)><a href="/recommend?page=${pNo+1}#main-content" class="btn btn-outline btn-sm pagination-link">下一页</a> <a href="/recommend?page=${pTotal}#main-content" class="btn btn-outline btn-sm pagination-link">末页</a><#else><span class="btn btn-outline btn-sm pagination-disabled">下一页</span> <span class="btn btn-outline btn-sm pagination-disabled">末页</span></#if>
+					</div>
+				<#else>
+					<div class="home-empty"><p class="text-muted">暂无推荐商品</p></div>
+				</#if>
+			</section>
+			<#else>
+			<!-- 首页 -->
+			<h2 class="page-title">${info!"首页"}</h2>
+			<#if products ?? && (products?size > 0)>
+				<div class="home-product-grid">
+					<#list products as p>
+						<article class="home-product-card">
+							<a href="/product/detail/${p.id}" class="home-card-link">
+								<div class="home-card-img">
+									<img src="/img/product/${p.id}.jpg" alt="${p.name}" onerror="this.src='/img/placeholder.svg'">
+								</div>
+								<div class="home-card-body">
+									<h3 class="home-card-name">${p.name}</h3>
+									<p class="home-card-desc">${(p.descr!'')?replace('\n',' ')}</p>
+									<div class="home-card-price">¥${p.memberprice?string("0.##")}</div>
+									<span class="home-card-cta">立即选购</span>
+								</div>
+							</a>
+						</article>
+					</#list>
+				</div>
+				<div class="pagination-bar">
+					<#assign pNo = pageNo!1>
+					<#assign pTotal = pageCount!1>
+					<#assign pSize = pageSize!12>
+					<#assign prevPage = pNo - 1>
+					<#assign nextPage = pNo + 1>
+					<#if categoryId ??>
+						<#if (pNo > 1)><a href="/product/listByCategory/${categoryId}/1" class="btn btn-outline btn-sm">首页</a> <a href="/product/listByCategory/${categoryId}/${prevPage}" class="btn btn-outline btn-sm">上一页</a></#if>
+						<span class="pagination-info">第 ${pNo} / ${pTotal} 页（每页 ${pSize} 件）</span>
+						<#if (pNo < pTotal)><a href="/product/listByCategory/${categoryId}/${nextPage}" class="btn btn-outline btn-sm">下一页</a> <a href="/product/listByCategory/${categoryId}/${pTotal}" class="btn btn-outline btn-sm">末页</a></#if>
+					<#else>
+						<a href="/#main-content" class="btn btn-outline btn-sm pagination-link">首页</a>
+						<#if (pNo > 1)><a href="/?page=${prevPage}#main-content" class="btn btn-outline btn-sm pagination-link">上一页</a><#else><span class="btn btn-outline btn-sm" style="opacity:0.6;cursor:default;">上一页</span></#if>
+						<span class="pagination-info">第 ${pNo} / ${pTotal} 页（每页 ${pSize} 件）</span>
+						<#if (pNo < pTotal)><a href="/?page=${nextPage}#main-content" class="btn btn-outline btn-sm pagination-link">下一页</a> <a href="/?page=${pTotal}#main-content" class="btn btn-outline btn-sm pagination-link">末页</a><#else><span class="btn btn-outline btn-sm" style="opacity:0.6;cursor:default;">下一页</span> <span class="btn btn-outline btn-sm" style="opacity:0.6;cursor:default;">末页</span></#if>
+					</#if>
+				</div>
+			<#else>
+				<div class="home-empty">
+					<p class="text-muted">暂无商品</p>
+					<p class="home-empty-hint">请确认已执行 <code>db\shopping.sql</code> 并访问 <strong>http://127.0.0.1:8090/</strong>（不要直接打开 index.html 文件）。</p>
+				</div>
+			</#if>
+			</#if>
+<#include "/common/tail.html">

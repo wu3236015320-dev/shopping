@@ -1,0 +1,43 @@
+<#include "/common/head.html">
+			<h2 class="page-title">添加商品</h2>
+			<div class="card card-body" style="max-width:480px;">
+			<form action="/product/add" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="add" value="ok">
+				<div class="form-group">
+					<label>商品名称</label>
+					<input type="text" name="name" class="form-control" required>
+				</div>
+				<div class="form-group">
+					<label>描述</label>
+					<textarea name="descr" class="form-control"></textarea>
+				</div>
+				<div class="form-group">
+					<label>原价</label>
+					<input type="number" name="normalprice" class="form-control" step="1" required>
+				</div>
+				<div class="form-group">
+					<label>会员价</label>
+					<input type="number" name="memberprice" class="form-control" step="1" required>
+				</div>
+				<div class="form-group">
+					<label>分类</label>
+					<#if categories ??>
+					<select name="categoryId" class="form-control">
+						<#list categories as c>
+							<option value="${c.id}">${c.name}</option>
+						</#list>
+					</select>
+					<#else>
+					<input type="number" name="categoryId" class="form-control">
+					</#if>
+				</div>
+				<div class="form-group">
+					<label>商品图片</label>
+					<input type="file" name="productImage" class="form-control" accept="image/*">
+					<small class="text-muted">支持 jpg、png 格式，最大 10MB</small>
+				</div>
+				<button type="submit" class="btn btn-primary">添加商品</button>
+			</form>
+			<#if info ??><p class="mt-2 <#if info?contains('失败')>red<#else>green</#if>">${info}</p></#if>
+			</div>
+<#include "/common/tail.html">

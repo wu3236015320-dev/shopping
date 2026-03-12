@@ -1,0 +1,26 @@
+<#include "/common/head.html">
+			<#if product ??>
+				<h2 class="page-title">${product.name}</h2>
+				<div class="product-detail card card-body" style="display:flex;gap:32px;flex-wrap:wrap;">
+					<div class="img-wrap">
+						<img src="/img/product/${product.id}.jpg" alt="${product.name}" onerror="this.src='/img/placeholder.svg'">
+					</div>
+					<div class="meta" style="flex:1;min-width:280px;">
+						<p class="text-muted">商品编号：${product.id}</p>
+						<p>${product.descr!''}</p>
+						<p class="price">¥${product.memberprice} <span class="old-price">¥${product.normalprice}</span></p>
+						<p class="text-muted">上架时间：${product.pdate!''}</p>
+						<p class="text-muted">赠送积分：${(product.memberprice/10)?int}</p>
+						<form action="/cart" method="get" class="mt-2">
+							<input type="hidden" name="productid" value="${product.id}">
+							<div class="form-group">
+								<label>购买数量</label>
+								<input type="number" name="count" value="1" min="1" max="99" class="form-control" style="width:100px;display:inline-block;">
+							</div>
+							<button type="submit" class="btn btn-primary">加入购物车</button>
+							<a href="javascript:;" class="btn btn-outline">收藏商品</a>
+						</form>
+					</div>
+				</div>
+			</#if>
+<#include "/common/tail.html">

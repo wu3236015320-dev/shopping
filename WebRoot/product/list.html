@@ -1,0 +1,45 @@
+<#include "/common/head.html">
+			<h2 class="page-title">商品列表</h2>
+			<div class="card">
+			<div class="table-wrap">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>名称</th>
+							<th>描述</th>
+							<th>原价</th>
+							<th>会员价</th>
+							<th>类别</th>
+							<th>上架</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<#list products as x>
+						<tr>
+							<td>${x.id}</td>
+							<td>${x.name}</td>
+							<td>${x.descr!''}</td>
+							<td>${x.normalprice}</td>
+							<td>${x.memberprice}</td>
+							<td>${x.categoryid}</td>
+							<td>${x.pdate!''}</td>
+							<td>
+								<a href="/product/update/${x.id}" onclick="return confirm('确定修改？');">修改</a>
+								<a href="#" class="product-delete" data-id="${x.id}">删除</a>
+								<a href="/product/uploadfile/${x.id}">上传</a>
+							</td>
+						</tr>
+						</#list>
+					</tbody>
+				</table>
+			</div>
+			<div class="card-body">
+				<a href="/product/list/${pageNo-1}" class="btn btn-outline btn-sm">上一页</a>
+				<span class="text-muted">第 ${pageNo} 页</span>
+				<a href="/product/list/${pageNo+1}" class="btn btn-outline btn-sm">下一页</a>
+			</div>
+			</div>
+			<script src="/js/deleteProduct.js"></script>
+<#include "/common/tail.html">

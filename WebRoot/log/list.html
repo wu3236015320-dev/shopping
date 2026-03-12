@@ -1,0 +1,34 @@
+<#include "/common/head.html">
+			<h2 class="page-title">系统日志</h2>
+			<div class="card">
+			<div class="table-wrap">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>用户</th>
+							<th>控制器</th>
+							<th>Action</th>
+							<th>时间</th>
+						</tr>
+					</thead>
+					<tbody>
+						<#list logList as log>
+						<tr>
+							<td>${log.id}</td>
+							<td>${log.username!''}</td>
+							<td>${log.controller!''}</td>
+							<td>${log.act!''}</td>
+							<td>${log.logdate!''}</td>
+						</tr>
+						</#list>
+					</tbody>
+				</table>
+			</div>
+			<div class="card-body">
+				<a href="/log/${pageNo-1}" class="btn btn-outline btn-sm">上一页</a>
+				<span class="text-muted">第 ${pageNo} 页 / 共 ${pageCount} 页</span>
+				<a href="/log/${pageNo+1}" class="btn btn-outline btn-sm">下一页</a>
+			</div>
+			</div>
+<#include "/common/tail.html">

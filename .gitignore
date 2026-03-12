@@ -1,0 +1,23 @@
+# 编译与运行产物（勿提交）
+bin/
+WebRoot/WEB-INF/classes/
+*.class
+
+# 日志
+*.log
+jfinal_demo.log
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# 系统与临时
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+
+# 安装包等勿放项目根目录（若误放可加入此处忽略）
+# mysql-*.msi

@@ -1,0 +1,42 @@
+<#include "/common/head.html">
+	<script src="/js/cart.js"></script>
+			<h2 class="page-title">我的购物车</h2>
+			<#if items ??>
+				<div class="card">
+					<div class="table-wrap">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>商品ID</th>
+									<th>商品名称</th>
+									<th>单价</th>
+									<th>数量</th>
+									<th>修改</th>
+									<th>删除</th>
+								</tr>
+							</thead>
+							<tbody>
+								<#list items as x>
+								<tr>
+									<td id="p${x.productId}">${x.productId}</td>
+									<td>${x.product.name}</td>
+									<td>${x.price}</td>
+									<td>${x.count}</td>
+									<td><button type="button" class="btn btn-outline btn-sm" id="cartUpdate">修改数量</button></td>
+									<td><a href="#" id="cartdelete">删除</a></td>
+								</tr>
+								</#list>
+							</tbody>
+						</table>
+					</div>
+					<div class="card-body">
+						<a href="/order?buy=ok" class="btn btn-primary">去结算</a>
+					</div>
+				</div>
+			<#else>
+				<div class="card card-body">
+					<p class="text-muted">购物车为空</p>
+					<a href="/" class="btn btn-primary">去逛逛</a>
+				</div>
+			</#if>
+<#include "/common/tail.html">

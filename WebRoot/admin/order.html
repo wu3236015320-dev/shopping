@@ -1,0 +1,83 @@
+<#include "/common/admin_head.html">
+
+<div class="page-title">📋 订单管理</div>
+
+<!-- 搜索栏 -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/order/search" class="btn btn-outline">🔍 搜索订单</a>
+    </div>
+</div>
+
+<!-- 订单列表 -->
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <div class="table-wrap">
+            <table class="table" style="margin-bottom: 0;">
+                <thead>
+                    <tr>
+                        <th>订单号</th>
+                        <th>收货地址</th>
+                        <th>日期</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <#if oLists?? && oLists?size gt 0>
+                        <#list oLists as o>
+                        <tr>
+                            <td>${o.id!''}</td>
+                            <td>${o.addr!''}</td>
+                            <td>${o.odate!''}</td>
+                            <td>
+                                <#if o.status??>
+                                    <#if o.status == 0>
+                                        <span style="color: #f59e0b; font-weight: 500;">未处理</span>
+                                    <#elseif o.status == 1>
+                                        <span style="color: #059669; font-weight: 500;">已处理</span>
+                                    <#elseif o.status == 2>
+                                        <span style="color: #dc2626; font-weight: 500;">废单</span>
+                                    <#else>
+                                        <span>未知</span>
+                                    </#if>
+                                <#else>
+                                    <span>-</span>
+                                </#if>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline opt-order" data-orderid="${o.id!''}" data-status="${o.status!0}">处理</button>
+                            </td>
+                            <td>
+                                <a href="/order/detail/${o.id!''}" class="btn btn-sm btn-outline">详情</a>
+                            </td>
+                        </tr>
+                        </#list>
+                    <#else>
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 48px; color: #718096;">暂无订单数据</td>
+                        </tr>
+                    </#if>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 分页 -->
+<div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 20px;">
+    <#if pageNo?? && pageNo gt 1>
+        <a href="/admin/order/${pageNo-1}" class="btn btn-outline btn-sm">上一页</a>
+    <#else>
+        <span class="btn btn-outline btn-sm" style="opacity: 0.5; cursor: not-allowed;">上一页</span>
+    </#if>
+    <span class="text-muted">第 ${pageNo!1} / ${pageCount!1} 页</span>
+    <#if pageNo?? && pageCount?? && pageNo lt pageCount>
+        <a href="/admin/order/${pageNo+1}" class="btn btn-outline btn-sm">下一页</a>
+    <#else>
+        <span class="btn btn-outline btn-sm" style="opacity: 0.5; cursor: not-allowed;">下一页</span>
+    </#if>
+</div>
+
+<#include "/common/admin_tail.html">

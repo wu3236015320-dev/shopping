@@ -1,0 +1,13 @@
+<#include "/common/head.html">
+			<h2 class="page-title">上传商品图片</h2>
+			<div class="card card-body" style="max-width:400px;">
+			<form action="/product/upload" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="id" value="${id}">
+				<div class="form-group">
+					<label>选择图片</label>
+					<input type="file" name="FILE" class="form-control" accept="image/*">
+				</div>
+				<button type="submit" class="btn btn-primary">上传</button>
+			</form>
+			</div>
+<#include "/common/tail.html">

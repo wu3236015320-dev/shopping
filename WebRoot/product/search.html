@@ -1,0 +1,39 @@
+<#include "/common/head.html">
+			<h2 class="page-title">搜索商品</h2>
+			<div class="card card-body mb-2">
+				<form action="/product/search" method="post">
+					<input type="hidden" name="search" value="ok">
+					<div class="form-group">
+						<label>产品类型</label>
+						<select name="categoryId" class="form-control" style="max-width:280px;">
+							<option value="0">全部类型</option>
+							<#if categories ??>
+								<#list categories as c>
+									<option value="${c.id}">${c.name}</option>
+								</#list>
+							</#if>
+						</select>
+					</div>
+					<div class="form-group">
+						<label>关键字</label>
+						<input type="text" name="keyword" class="form-control" placeholder="关键词" style="max-width:280px;">
+					</div>
+					<div class="form-group">
+						<label>正常价格</label>
+						<span>从</span> <input type="number" name="minNormalprice" class="form-control" style="width:120px;display:inline-block;"> 
+						<span>到</span> <input type="number" name="maxNormalprice" class="form-control" style="width:120px;display:inline-block;">
+					</div>
+					<div class="form-group">
+						<label>会员价格</label>
+						<span>从</span> <input type="number" name="minMemberprice" class="form-control" style="width:120px;display:inline-block;"> 
+						<span>到</span> <input type="number" name="maxMemberprice" class="form-control" style="width:120px;display:inline-block;">
+					</div>
+					<div class="form-group">
+						<label>上架时间</label>
+						<span>从</span> <input type="date" name="minpdate" class="form-control" style="width:160px;display:inline-block;"> 
+						<span>到</span> <input type="date" name="maxpdate" class="form-control" style="width:160px;display:inline-block;">
+					</div>
+					<button type="submit" class="btn btn-primary">搜索</button>
+				</form>
+			</div>
+<#include "/common/tail.html">

@@ -1,0 +1,145 @@
+<#include "/common/admin_head.html">
+
+<div class="page-title">📦 商品管理</div>
+
+<!-- 操作按钮栏 -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/product/add" class="btn btn-primary">+ 添加商品</a>
+        <a href="/product/search" class="btn btn-outline">🔍 搜索商品</a>
+    </div>
+    <button id="toggleCategoryBtn" class="btn btn-outline" onclick="toggleCategoryPanel()">📁 管理分类</button>
+</div>
+
+<!-- 分类管理面板（可折叠） -->
+<div id="categoryPanel" style="display: none; margin-bottom: 24px;">
+    <div class="card">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 1.1rem;">分类管理</h3>
+                <a href="/category/add" class="btn btn-sm btn-primary">+ 添加分类</a>
+            </div>
+            <div class="table-wrap">
+                <table class="table" style="margin-bottom: 0;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>分类名称</th>
+                            <th>父级ID</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <#if categories??>
+                            <#list categories as c>
+                            <tr>
+                                <td>${c.id}</td>
+                                <td>${c.name}</td>
+                                <td>${c.pid!0}</td>
+                                <td>
+                                    <a href="/category/update/${c.id}" class="btn btn-sm btn-outline">修改</a>
+                                    <a href="/category/delete/${c.id}" class="btn btn-sm btn-outline" style="color: #dc2626;" onclick="return confirm('确定删除分类 ${c.name}？')">删除</a>
+                                </td>
+                            </tr>
+                            </#list>
+                        </#if>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 商品列表 -->
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <div class="table-wrap">
+            <table class="table" style="margin-bottom: 0;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>描述</th>
+                        <th>原价</th>
+                        <th>会员价</th>
+                        <th>分类</th>
+                        <th>上架时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <#if products??>
+                        <#list products as x>
+                        <tr>
+                            <td>${x.id}</td>
+                            <td>${x.name}</td>
+                            <td>${x.descr!''}</td>
+                            <td>¥${x.normalprice}</td>
+                            <td style="color: #c2410c; font-weight: 600;">¥${x.memberprice}</td>
+                            <td>
+                                <#if x.categoryid??>
+                                    <span class="category-tag">${x.categoryid}</span>
+                                <#else>
+                                    <span style="color: #9ca3af;">-</span>
+                                </#if>
+                            </td>
+                            <td>${x.pdate!''}</td>
+                            <td>
+                                <a href="/product/update/${x.id}" class="btn btn-sm btn-outline">修改</a>
+                                <a href="#" class="btn btn-sm btn-outline product-delete" data-id="${x.id}" style="color: #dc2626;">删除</a>
+                            </td>
+                        </tr>
+                        </#list>
+                    <#else>
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 48px; color: #718096;">暂无商品数据</td>
+                        </tr>
+                    </#if>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 分页 -->
+<#if pageNo?? && pageCount??>
+<div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 20px;">
+    <#if pageNo gt 1>
+        <a href="/admin/product/${pageNo-1}" class="btn btn-outline btn-sm">上一页</a>
+    <#else>
+        <span class="btn btn-outline btn-sm" style="opacity: 0.5; cursor: not-allowed;">上一页</span>
+    </#if>
+    <span class="text-muted">第 ${pageNo} / ${pageCount} 页</span>
+    <#if pageNo lt pageCount>
+        <a href="/admin/product/${pageNo+1}" class="btn btn-outline btn-sm">下一页</a>
+    <#else>
+        <span class="btn btn-outline btn-sm" style="opacity: 0.5; cursor: not-allowed;">下一页</span>
+    </#if>
+</div>
+</#if>
+
+<script src="/js/deleteProduct.js"></script>
+<script>
+function toggleCategoryPanel() {
+    var panel = document.getElementById('categoryPanel');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+    } else {
+        panel.style.display = 'none';
+    }
+}
+</script>
+
+<style>
+.category-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+</style>
+
+<#include "/common/admin_tail.html">

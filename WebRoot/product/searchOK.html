@@ -1,0 +1,22 @@
+<#include "/common/head.html">
+			<h2 class="page-title">搜索结果</h2>
+			<#if products ??>
+				<div class="product-grid">
+					<#list products as p>
+						<article class="product-card">
+							<a href="/product/detail/${p.id}">
+								<div class="img-wrap">
+									<img src="/img/product/${p.id}.jpg" alt="${p.name}" onerror="this.src='/img/placeholder.svg'">
+								</div>
+								<div class="info">
+									<div class="name">${p.name}</div>
+									<div class="price">¥${p.memberprice}</div>
+								</div>
+							</a>
+						</article>
+					</#list>
+				</div>
+			<#else>
+				<p class="text-muted">未找到相关商品</p>
+			</#if>
+<#include "/common/tail.html">

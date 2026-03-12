@@ -1,0 +1,155 @@
+<#include "/common/head.html">
+<style>
+	.profile-wrap { max-width: 1000px; margin: 0 auto; padding: 24px 24px 48px; display: flex; gap: 28px; flex-wrap: wrap; }
+	.profile-side { width: 220px; flex-shrink: 0; background: #fff; border-radius: 16px; padding: 24px 0; box-shadow: 0 4px 20px rgba(0,0,0,.08); border: 1px solid #e2e8f0; }
+	.profile-side .side-title { padding: 0 24px 16px; font-size: 18px; font-weight: 700; color: #1a1d21; border-bottom: 3px solid #c2410c; margin-bottom: 12px; }
+	.profile-side .nav { list-style: none; margin: 0; padding: 0; }
+	.profile-side .nav a { display: block; padding: 14px 24px; color: #4a5568; text-decoration: none; font-size: 14px; border-left: 4px solid transparent; transition: all .2s; }
+	.profile-side .nav a:hover { background: #fff7ed; color: #c2410c; border-left-color: #c2410c; }
+	.profile-side .nav a.active { background: linear-gradient(90deg, rgba(194,65,12,.08) 0%, transparent 100%); color: #c2410c; font-weight: 600; border-left-color: #c2410c; }
+	.profile-main { flex: 1; min-width: 0; }
+	.profile-panel { display: none; background: #fff; border-radius: 16px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,.08); border: 1px solid #e2e8f0; }
+	.profile-panel.on { display: block; animation: fadeIn .25s ease; }
+	@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+	.profile-welcome { text-align: center; padding: 40px 24px; }
+	.profile-welcome .avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b 0%, #c2410c 100%); color: #fff; font-size: 32px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+	.profile-welcome .avatar.admin { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+	.profile-welcome h2 { font-size: 1.5rem; margin: 0 0 8px; color: #1a1d21; }
+	.profile-welcome .muted { color: #718096; font-size: 14px; margin-bottom: 28px; }
+	.profile-welcome .quick-links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+	.profile-welcome .quick-links a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); color: #c2410c; text-decoration: none; border-radius: 10px; font-weight: 600; border: 1px solid rgba(194,65,12,.2); transition: all .2s; }
+	.profile-welcome .quick-links a:hover { background: linear-gradient(135deg, #c2410c 0%, #9a3412 100%); color: #fff; border-color: transparent; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(194,65,12,.3); }
+	.profile-panel .panel-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; color: #1a1d21; }
+	.profile-panel .form-group { margin-bottom: 20px; }
+	.profile-panel .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #374151; }
+	.profile-panel .form-control { width: 100%; max-width: 400px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; }
+	.profile-panel .form-control:focus { outline: none; border-color: #c2410c; box-shadow: 0 0 0 4px rgba(194,65,12,.15); }
+	.profile-panel .form-control[readonly] { background: #f8fafc; color: #64748b; }
+	.profile-panel .btn { padding: 12px 28px; font-size: 14px; font-weight: 600; border-radius: 10px; cursor: pointer; border: none; transition: all .2s; }
+	.profile-panel .btn-primary { background: linear-gradient(135deg, #c2410c 0%, #9a3412 100%); color: #fff; }
+	.profile-panel .btn-primary:hover { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); box-shadow: 0 4px 16px rgba(194,65,12,.35); }
+	.profile-msg { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 10px; font-weight: 500; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,.15); }
+	.profile-msg.ok { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #fff; }
+	.profile-msg.err { background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #fff; }
+</style>
+<#if user ??>
+	<div class="profile-wrap">
+		<#if msg??>
+		<#if msg == "update_ok" || msg == "pwd_ok">
+		<div class="profile-msg ok" id="profileMsg">
+		<#else>
+		<div class="profile-msg err" id="profileMsg">
+		</#if>
+			<#if msg == "update_ok">资料已保存
+			<#elseif msg == "update_fail">保存失败，请重试
+			<#elseif msg == "phone_addr_required">电话和地址不能为空
+			<#elseif msg == "pwd_ok">密码修改成功
+			<#elseif msg == "pwd_fail">密码修改失败
+			<#elseif msg == "pwd_old_wrong">旧密码不正确
+			<#elseif msg == "pwd_mismatch">两次新密码不一致
+			<#else></#if>
+		</div>
+		<script>setTimeout(function(){ var m=document.getElementById('profileMsg'); if(m){ m.style.display='none'; history.replaceState(null,'','/user/selfServer'); } }, 3000);</script>
+		</#if>
+		<aside class="profile-side">
+			<div class="side-title">个人中心</div>
+			<ul class="nav">
+				<li><a href="javascript:;" class="active" data-panel="welcome">首页</a></li>
+				<li><a href="javascript:;" data-panel="info">用户信息</a></li>
+				<li><a href="javascript:;" data-panel="update">修改资料</a></li>
+				<li><a href="javascript:;" data-panel="pwd">修改密码</a></li>
+				<li><a href="/order/myOrder/${user.id}">我的订单</a></li>
+				<li><a href="/cart/myCart">我的购物车</a></li>
+			</ul>
+		</aside>
+		<main class="profile-main">
+			<div id="panel-welcome" class="profile-panel on">
+				<div class="profile-welcome">
+					<div class="avatar <#if (user.username == "admin")>admin</#if>"><#if (user.username?? && user.username?length > 0)>${user.username?substring(0,1)?upper_case}<#else>?</#if></div>
+					<h2>欢迎回来，${user.username!''}</h2>
+					<p class="muted">在这里管理您的资料与订单</p>
+					<div class="quick-links">
+						<a href="/order/myOrder/${user.id}">我的订单</a>
+						<a href="/cart/myCart">我的购物车</a>
+					</div>
+				</div>
+			</div>
+			<div id="panel-info" class="profile-panel">
+				<h2 class="panel-title">用户信息</h2>
+				<div class="form-group">
+					<label>用户名</label>
+					<input type="text" class="form-control" readonly value="${user.username!''}">
+				</div>
+				<div class="form-group">
+					<label>电话</label>
+					<input type="text" class="form-control" readonly value="${user.phone!''}">
+				</div>
+				<div class="form-group">
+					<label>地址</label>
+					<input type="text" class="form-control" readonly value="${user.addr!''}">
+				</div>
+			</div>
+			<div id="panel-update" class="profile-panel">
+				<h2 class="panel-title">修改资料</h2>
+				<form action="/user/update" method="post">
+					<div class="form-group">
+						<label>用户名</label>
+						<input type="text" class="form-control" readonly value="${user.username!''}">
+					</div>
+					<div class="form-group">
+						<label>电话</label>
+						<input type="text" name="phone" class="form-control" value="${user.phone!''}" placeholder="请输入手机号">
+					</div>
+					<div class="form-group">
+						<label>地址</label>
+						<input type="text" name="addr" class="form-control" value="${user.addr!''}" placeholder="请输入收货地址">
+					</div>
+					<button type="submit" class="btn btn-primary">保存</button>
+				</form>
+			</div>
+			<div id="panel-pwd" class="profile-panel">
+				<h2 class="panel-title">修改密码</h2>
+				<form action="/user/updatePassword" method="post">
+					<div class="form-group">
+						<label>旧密码</label>
+						<input type="password" name="password" class="form-control" required placeholder="请输入当前密码">
+					</div>
+					<div class="form-group">
+						<label>新密码</label>
+						<input type="password" name="password1" class="form-control" required placeholder="请输入新密码">
+					</div>
+					<div class="form-group">
+						<label>确认新密码</label>
+						<input type="password" name="password2" class="form-control" required placeholder="请再次输入新密码">
+					</div>
+					<button type="submit" class="btn btn-primary">确认修改</button>
+				</form>
+			</div>
+		</main>
+	</div>
+	<script>
+	(function(){
+		var nav = document.querySelectorAll('.profile-side .nav a[data-panel]');
+		var panels = document.querySelectorAll('.profile-panel');
+		nav.forEach(function(a){
+			a.addEventListener('click', function(){
+				var id = 'panel-' + a.getAttribute('data-panel');
+				nav.forEach(function(n){ n.classList.remove('active'); });
+				panels.forEach(function(p){ p.classList.remove('on'); });
+				a.classList.add('active');
+				var el = document.getElementById(id);
+				if (el) el.classList.add('on');
+			});
+		});
+	})();
+	</script>
+<#else>
+	<div class="profile-wrap">
+		<div class="profile-main" style="flex:1;">
+			<div class="profile-panel on">
+				<p class="text-muted">请先 <a href="/user/login">登录</a> 后使用个人中心。</p>
+			</div>
+		</div>
+	</div>
+</#if>
+<#include "/common/tail.html">

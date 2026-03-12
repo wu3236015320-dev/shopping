@@ -1,0 +1,76 @@
+<#include "/common/admin_head.html">
+
+<div class="page-title">📈 销售报表</div>
+
+<!-- 统计摘要 -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+    <div style="padding: 20px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; text-align: center;">
+        <div style="font-size: 12px; color: #92400e; margin-bottom: 8px;">总订单数</div>
+        <div style="font-size: 2rem; font-weight: 700; color: #92400e;">${totalOrders!0}</div>
+    </div>
+    <div style="padding: 20px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; text-align: center;">
+        <div style="font-size: 12px; color: #1e40af; margin-bottom: 8px;">总销售额</div>
+        <div style="font-size: 2rem; font-weight: 700; color: #1e40af;">¥${totalSales!'0.00'}</div>
+    </div>
+    <div style="padding: 20px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-radius: 12px; text-align: center;">
+        <div style="font-size: 12px; color: #065f46; margin-bottom: 8px;">平均订单金额</div>
+        <div style="font-size: 2rem; font-weight: 700; color: #065f46;">¥${avgOrderAmount!'0.00'}</div>
+    </div>
+</div>
+
+<!-- 图表区域 -->
+<div class="card">
+    <div class="card-body">
+        <h3 style="margin-bottom: 20px; font-size: 1.1rem;">产品销售排行 TOP10</h3>
+        <div style="width: 100%; height: 400px;">
+            <canvas id="salesChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// 安全地解析数据
+var productNames = [];
+var salesData = [];
+
+try {
+    productNames = ${productNames!"['暂无数据']"};
+} catch(e) {
+    productNames = ['暂无数据'];
+}
+
+try {
+    salesData = ${salesData!"[0]"};
+} catch(e) {
+    salesData = [0];
+}
+
+var ctx = document.getElementById('salesChart').getContext('2d');
+var salesChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: productNames,
+        datasets: [{
+            label: '销售量',
+            data: salesData,
+            backgroundColor: 'rgba(194, 65, 12, 0.8)',
+            borderColor: 'rgba(194, 65, 12, 1)',
+            borderWidth: 1,
+            borderRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 } }
+        }
+    }
+});
+</script>
+
+<#include "/common/admin_tail.html">

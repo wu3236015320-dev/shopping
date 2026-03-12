@@ -1,0 +1,21 @@
+<#include "/common/admin_head.html">
+			<h2 class="page-title">添加用户</h2>
+		<div class="card card-body mb-2">
+			<form action="/admin/addUser" method="post">
+				<div class="form-group">
+					<label>用户名</label>
+					<input type="text" name="username" class="form-control" required>
+				</div>
+				<button type="submit" class="btn btn-primary">添加</button>
+			</form>
+		</div>
+		<#if newuser ??>
+		<div class="card card-body">
+			<p class="text-muted">请记录以下信息</p>
+			<table class="table">
+				<tr><th style="width:100px;">用户名</th><td>${newuser.username}</td></tr>
+				<tr><th>密码</th><td>${newuser.password}</td></tr>
+			</table>
+		</div>
+		</#if>
+<#include "/common/admin_tail.html">

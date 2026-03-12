@@ -1,0 +1,17 @@
+<#include "/common/head.html">
+			<h2 class="page-title">添加分类</h2>
+			<div class="card card-body" style="max-width:420px;">
+			<form action="/category/add" method="post">
+				<div class="form-group">
+					<label>名称</label>
+					<input type="text" name="name" class="form-control" required>
+				</div>
+				<div class="form-group">
+					<label>描述</label>
+					<textarea name="descr" class="form-control"></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary">添加</button>
+			</form>
+			<#if info ??><p class="mt-2 <#if info?contains('失败')>red<#else>green</#if>">${info}</p></#if>
+			</div>
+<#include "/common/tail.html">

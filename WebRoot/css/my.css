@@ -1,0 +1,15 @@
+body{
+    background: #f8fcd4;
+  	background: radial-gradient(center, ellipse cover,  #f8fcd4 19%,#dbfacb 100%);
+  	background-attachment: fixed;
+}
+
+footer {
+    position: relative;
+    padding-top: 40px;
+    margin-top: -40px; /* negative value of footer height */
+    height: 20px;
+    clear:both;
+    background-color: #f5f5f5;
+}
+

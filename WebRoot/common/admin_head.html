@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>${pageTitle!"管理后台"}</title>
+	<style>
+		* { box-sizing: border-box; }
+		body { margin: 0; background: linear-gradient(180deg, #f8fafc 0%, #f0f2f5 50%, #e8ecf1 100%); background-attachment: fixed; color: #1a1d21; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; font-size: 14px; line-height: 1.6; }
+		.site-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+		/* ========== 管理后台顶部栏 ========== */
+		.admin-topbar {
+			background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 50%, #2563eb 100%);
+			color: rgba(255,255,255,.9);
+			padding: 12px 0;
+			box-shadow: 0 2px 8px rgba(30, 58, 95, .3);
+		}
+		.admin-topbar .site-wrap {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.admin-logo {
+			font-size: 1.4rem;
+			font-weight: 700;
+			color: #fff;
+			text-decoration: none;
+		}
+		.admin-logo:hover { color: #fbbf24; }
+		.admin-user {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+		.admin-user .user-avatar {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+			color: #fff;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 14px;
+			font-weight: 700;
+		}
+		.admin-user .user-name {
+			font-weight: 600;
+			color: #fff;
+		}
+		.admin-user a {
+			color: rgba(255,255,255,.85);
+			text-decoration: none;
+			padding: 6px 12px;
+			border-radius: 6px;
+			font-size: 13px;
+			transition: all 0.2s ease;
+		}
+		.admin-user a:hover {
+			color: #fff;
+			background: rgba(255,255,255,.15);
+		}
+
+		/* ========== 管理后台主体布局 ========== */
+		.admin-container {
+			display: flex;
+			max-width: 1400px;
+			margin: 0 auto;
+			padding: 24px;
+			gap: 24px;
+			min-height: calc(100vh - 60px);
+		}
+
+		/* ========== 左侧管理菜单 ========== */
+		.admin-sidebar {
+			width: 240px;
+			flex-shrink: 0;
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 4px 14px rgba(0,0,0,.08);
+			padding: 20px 0;
+			position: sticky;
+			top: 24px;
+			height: fit-content;
+		}
+		.admin-sidebar .sidebar-header {
+			padding: 0 20px 16px;
+			border-bottom: 2px solid #e2e8f0;
+			margin-bottom: 12px;
+		}
+		.admin-sidebar .sidebar-title {
+			font-size: 15px;
+			font-weight: 700;
+			color: #1a1d21;
+		}
+		.admin-sidebar .sidebar-desc {
+			font-size: 12px;
+			color: #718096;
+			margin-top: 4px;
+		}
+		.admin-menu {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+		.admin-menu li {
+			margin: 4px 0;
+		}
+		.admin-menu a {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 12px 20px;
+			color: #4a5568;
+			text-decoration: none;
+			font-size: 14px;
+			font-weight: 500;
+			border-left: 4px solid transparent;
+			transition: all 0.2s ease;
+		}
+		.admin-menu a:hover {
+			background: linear-gradient(90deg, #fff7ed 0%, rgba(255,237,213,.5) 100%);
+			border-left-color: #c2410c;
+			color: #9a3412;
+		}
+		.admin-menu .menu-icon {
+			width: 20px;
+			text-align: center;
+			font-size: 16px;
+		}
+		.admin-menu .menu-label {
+			flex: 1;
+		}
+
+		/* ========== 主内容区 ========== */
+		.admin-main {
+			flex: 1;
+			min-width: 0;
+			background: #fff;
+			border-radius: 12px;
+			padding: 28px;
+			box-shadow: 0 4px 14px rgba(0,0,0,.08);
+		}
+		.admin-main .page-title {
+			font-size: 1.5rem;
+			font-weight: 700;
+			margin-bottom: 24px;
+			color: #1a1d21;
+			padding-bottom: 12px;
+			border-bottom: 2px solid #e2e8f0;
+		}
+
+		/* ========== 通用组件样式 ========== */
+		.card {
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 4px 14px rgba(0,0,0,.08);
+			border: 1px solid #e2e8f0;
+			overflow: hidden;
+			margin-bottom: 24px;
+		}
+		.card-body { padding: 24px; }
+		.btn {
+			display: inline-block;
+			padding: 10px 20px;
+			font-size: 14px;
+			font-weight: 600;
+			border-radius: 8px;
+			cursor: pointer;
+			text-decoration: none;
+			border: none;
+			transition: all .25s ease;
+			box-shadow: 0 1px 3px rgba(0,0,0,.06);
+		}
+		.btn-primary {
+			background: linear-gradient(135deg, #c2410c 0%, #9a3412 100%);
+			color: #fff;
+		}
+		.btn-primary:hover {
+			background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+			box-shadow: 0 6px 20px rgba(194,65,12,.25);
+			transform: translateY(-1px);
+		}
+		.btn-outline {
+			background: #fff;
+			border: 2px solid #e2e8f0;
+			color: #1a1d21;
+		}
+		.btn-outline:hover {
+			border-color: #c2410c;
+			color: #c2410c;
+			background: #fff7ed;
+		}
+		.btn-sm { padding: 6px 12px; font-size: 13px; }
+		.form-group { margin-bottom: 18px; }
+		.form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #1a1d21; }
+		.form-control {
+			width: 100%;
+			max-width: 360px;
+			padding: 10px 14px;
+			border: 2px solid #e2e8f0;
+			border-radius: 8px;
+			font-size: 14px;
+			transition: all 0.2s ease;
+		}
+		.form-control:focus {
+			outline: none;
+			border-color: #c2410c;
+			box-shadow: 0 0 0 4px rgba(194,65,12,.15);
+		}
+		textarea.form-control { min-height: 100px; resize: vertical; }
+		.text-muted { color: #718096; }
+		.mb-2 { margin-bottom: 16px; }
+		.mt-1 { margin-top: 8px; }
+		.mt-2 { margin-top: 16px; }
+	</style>
+	<link rel="stylesheet" href="/css/theme.css">
+	<script src="/js/jquery.js"></script>
+</head>
+<body>
+	<!-- 管理后台顶部栏 -->
+	<div class="admin-topbar">
+		<div class="site-wrap">
+			<a class="admin-logo" href="/admin">🛠 管理后台</a>
+			<div class="admin-user">
+			<span class="user-avatar"><#if user?? && user.username??>${user.username?substring(0,1)?upper_case}<#else>A</#if></span>
+			<span class="user-name"><#if user?? && user.username??>${user.username}<#else>管理员</#if></span>
+				<a href="/">返回首页</a>
+				<a href="/user/logout">退出登录</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 管理后台主体 -->
+	<div class="admin-container">
+		<!-- 左侧管理菜单 -->
+		<aside class="admin-sidebar">
+			<div class="sidebar-header">
+				<div class="sidebar-title">功能菜单</div>
+				<div class="sidebar-desc">请选择管理项目</div>
+			</div>
+			<ul class="admin-menu">
+				<li><a href="/admin"><span class="menu-icon">📊</span><span class="menu-label">概览面板</span></a></li>
+				<li><a href="/admin/recommend"><span class="menu-icon">⭐</span><span class="menu-label">推荐商品</span></a></li>
+				<li><a href="/admin/product"><span class="menu-icon">📦</span><span class="menu-label">商品管理</span></a></li>
+				<li><a href="/admin/order"><span class="menu-icon">📋</span><span class="menu-label">订单管理</span></a></li>
+				<li><a href="/admin/user"><span class="menu-icon">👤</span><span class="menu-label">用户管理</span></a></li>
+				<li><a href="/admin/report"><span class="menu-icon">📈</span><span class="menu-label">销售报表</span></a></li>
+			</ul>
+		</aside>
+		<main class="admin-main" id="main-content">

@@ -1,0 +1,30 @@
+<#include "/common/head.html">
+			<#if items ??>
+			<h2 class="page-title">订单详情</h2>
+			<#assign prices=0 />
+			<div class="card">
+			<div class="table-wrap">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>商品</th>
+							<th>单价</th>
+							<th>数量</th>
+						</tr>
+					</thead>
+					<tbody>
+						<#list items as x>
+						<tr>
+							<td>${x.getProduct(x.productid).name}</td>
+							<td>${x.unitprice}</td>
+							<td>${x.pcount}</td>
+						</tr>
+						<#assign prices = prices + x.unitprice * x.pcount />
+						</#list>
+					</tbody>
+				</table>
+			</div>
+			<p class="card-body"><strong>合计：¥${prices}</strong></p>
+			</div>
+			</#if>
+<#include "/common/tail.html">
