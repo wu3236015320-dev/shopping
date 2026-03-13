@@ -286,9 +286,8 @@ mysql -u root -p shopping < shopping-export.sql
 
 ## 文档
 
-- [全部操作步骤.md](全部操作步骤.md) - 详细部署指南
-- [docs/轮盘系统架构精简图.md](docs/轮盘系统架构精简图.md) - 架构图解
-- [docs/轮盘系统通俗图解.md](docs/轮盘系统通俗图解.md) - 生活化比喻解释
+- [部署说明.md](部署说明.md) - 部署说明
+
 
 ## License
 
